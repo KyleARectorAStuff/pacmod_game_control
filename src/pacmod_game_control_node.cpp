@@ -155,7 +155,7 @@ void callback_joy(const sensor_msgs::Joy::ConstPtr& msg)
   else if(controller_type == 2) 
   {  
     // Enable
-    if(msg->axes[6] >= 0.9 || msg->axes[10] >= 0.9) {
+    if(msg->buttons[6] >= 0.9 || msg->buttons[10] >= 0.9) {
       std_msgs::Bool bool_pub_msg;
       bool_pub_msg.data = true;
       local_enable = true;
@@ -163,7 +163,7 @@ void callback_joy(const sensor_msgs::Joy::ConstPtr& msg)
     }
 
     // Disable
-    if(msg->axes[7] <= -0.9 || msg->axes[11] <= -0.9) {
+    if(msg->buttons[7] <= -0.9 || msg->buttons[11] <= -0.9) {
       std_msgs::Bool bool_pub_msg;
       bool_pub_msg.data = false;
       local_enable = false;
