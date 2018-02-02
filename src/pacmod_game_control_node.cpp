@@ -163,7 +163,7 @@ void callback_joy(const sensor_msgs::Joy::ConstPtr& msg)
     }
 
     // Disable
-    if(msg->buttons[7] <= -0.9 || msg->buttons[11] <= -0.9) {
+    if(msg->buttons[7] >= 0.9 || msg->buttons[11] >= 0.9) {
       std_msgs::Bool bool_pub_msg;
       bool_pub_msg.data = false;
       local_enable = false;
@@ -572,7 +572,8 @@ void callback_joy(const sensor_msgs::Joy::ConstPtr& msg)
 /*
  * Main method running the ROS Node
  */
-int main(int argc, char *argv[]) { 
+int main(int argc, char *argv[]) 
+{ 
   bool willExit = false;
   ros::init(argc, argv, "pacmod_gamepad_control");
   ros::AsyncSpinner spinner(2);
@@ -588,7 +589,9 @@ int main(int argc, char *argv[]) {
   {
     ROS_INFO("Got steering_axis: %d", steering_axis);
 
-    if ((steering_axis!=0)&&(steering_axis!=3))
+    // Steering axis has to be equal to zero or three
+    if(steering_axis != 0 &&
+       steering_axis != 3)
     {
       ROS_INFO("steering_axis is invalid");
       willExit = true;
@@ -634,9 +637,10 @@ int main(int argc, char *argv[]) {
     ROS_INFO("Got controller_type: %d", controller_type);
 
     if (controller_type != 0 &&
-        controller_type != 1)
+        controller_type != 1 &&
+        controller_type != 2)
     {
-      ROS_INFO("steering_axis is invalid");
+      ROS_INFO("controller_type is invalid");
       willExit = true;
     }
   }
