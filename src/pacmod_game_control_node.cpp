@@ -249,7 +249,7 @@ void callback_joy(const sensor_msgs::Joy::ConstPtr& msg)
       
       if (last_axes.empty() ||
             (last_axes[5] != msg->axes[5] ||
-             last_axes[4] != last_axes[4]))
+             last_axes[4] != msg->axes[4]))
         turn_signal_cmd_pub.publish(turn_signal_cmd_pub_msg);
     } 
 
@@ -427,12 +427,13 @@ void callback_joy(const sensor_msgs::Joy::ConstPtr& msg)
         shift_cmd_pub.publish(shift_cmd_pub_msg);
       }
     }
+    // Logitech G29
     else if(controller_type == 2)
     {
       // Shifting: reverse
       if(msg->buttons[2] == 1 &&
           (last_buttons.empty() ||
-           last_buttons[1] != msg->buttons[1])) {
+           last_buttons[1] != msg->buttons[2])) {
         pacmod_msgs::PacmodCmd shift_cmd_pub_msg;
         shift_cmd_pub_msg.ui16_cmd = SHIFT_REVERSE;
         shift_cmd_pub.publish(shift_cmd_pub_msg);
@@ -469,9 +470,9 @@ void callback_joy(const sensor_msgs::Joy::ConstPtr& msg)
       if (enable_accel)
       {
         if ((vehicle_type == 2) || (vehicle_type == 4))
-          accelerator_cmd_pub_msg.f64_cmd = (0.5*(msg->axes[2]-1.0));
+          accelerator_cmd_pub_msg.f64_cmd = (0.5*(msg->axes[2]+1.0));
         else
-          accelerator_cmd_pub_msg.f64_cmd = (0.5*(msg->axes[2]-1.0))*0.6+0.21;
+          accelerator_cmd_pub_msg.f64_cmd = (0.5*(msg->axes[2]+1.0))*0.6+0.21;
       }
       else
       {
@@ -489,7 +490,7 @@ void callback_joy(const sensor_msgs::Joy::ConstPtr& msg)
 
       if (enable_brake)
       {
-        pub_msg1.f64_cmd = ((msg->axes[3] - 1.0) / 2.0) * brake_scale_val;
+        pub_msg1.f64_cmd = ((msg->axes[3] + 1.0) / 2.0) * brake_scale_val;
       }
       else
       {
@@ -513,11 +514,10 @@ void callback_joy(const sensor_msgs::Joy::ConstPtr& msg)
         shift_cmd_pub_msg.ui16_cmd = SHIFT_NEUTRAL;
         shift_cmd_pub.publish(shift_cmd_pub_msg);
       }
-
+      // TODO : review this section of code
       if(vehicle_type == 2)
       {
         // Headlights
-        // TODO: Implement for HRI Controller
         if(msg->axes[5] == 1.0)
         {
           // Rotate through headlight states as button is pressed 
@@ -532,7 +532,6 @@ void callback_joy(const sensor_msgs::Joy::ConstPtr& msg)
         }
 
         // Horn
-        // TODO: Implement for HRI Controller
         pacmod_msgs::PacmodCmd horn_cmd_pub_msg;
 
         if(msg->buttons[23] == 1)
@@ -542,7 +541,7 @@ void callback_joy(const sensor_msgs::Joy::ConstPtr& msg)
 
         horn_cmd_pub.publish(horn_cmd_pub_msg);
       }
-
+      // TODO : review this section of code
       if(vehicle_type == 3) // Semi
       {
         // Windshield wipers
